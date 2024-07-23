@@ -1,4 +1,8 @@
-export const galleryItems = [
+import SimpleLightbox from 'simplelightbox';
+
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
+const images = [
   {
     preview:
       'https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820__480.jpg',
@@ -63,3 +67,26 @@ export const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryContainer = document.querySelector('.gallery');
+const imagesMarkup = createImagesMarkup(images);
+
+galleryContainer.insertAdjacentHTML('beforeend', imagesMarkup);
+
+function createImagesMarkup(images) {
+  return images
+    .map(
+      ({ preview, original, description }) => `<li class="gallery-item">
+  <a class="gallery-link" href="${original}">
+    <img class="gallery-image" src="${preview}" alt="${description}" width="360"
+      height="200" />
+  </a>
+</li>`
+    )
+    .join('');
+}
+
+var lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
