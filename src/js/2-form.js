@@ -1,46 +1,44 @@
-const STORAGE_KEY = 'feedback-form-state';
+let formData = {
+    email: "",
+    message: ""
+};
 
-let formData = { email: '', message: '' };
+const form = document.querySelector(".feedback-form");
+const formDataKey = "feedback-form-state";
+let savedFormData = JSON.parse(localStorage.getItem(formDataKey));
 
-const form = document.querySelector('.feedback-form');
+form.addEventListener("input", updateFormData);
 
-populateFormArea();
-
-form.addEventListener('input', onFormInput);
-form.addEventListener('submit', onFormSubmit);
-
-function onFormInput(event) {
-  formData[event.target.name] = event.target.value.trim();
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+if (savedFormData) {
+  formData = savedFormData;
 }
 
-function onFormSubmit(event) {
+function saveFormData() {
+  localStorage.setItem(formDataKey, JSON.stringify(formData));
+}
+
+function updateFormData(event) {
+  const { name, value } = event.target;
+  formData[name] = value.trim();
+  saveFormData();
+}
+
+form.email.value = formData.email;
+form.message.value = formData.message;
+
+form.addEventListener("submit", function (event) {
   event.preventDefault();
 
-  const formElements = event.currentTarget.elements;
-
-  const mail = formElements.email.value.trim();
-  const message = formElements.message.value.trim();
-
-  if (mail === '' || message === '') {
-    alert(`Fill please all fields`);
-  } else {
-    console.log(formData);
+  if (!formData.email.trim() || !formData.message.trim()) {
+    alert("Please fill in all fields.");
+    return;
   }
 
-  localStorage.removeItem(STORAGE_KEY);
-
-  formData = { email: '', message: '' };
-
-  event.currentTarget.reset();
-}
-
-function populateFormArea() {
-  const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-
-  if (savedData) {
-    form['email'].value = savedData['email'];
-    form['message'].value = savedData['message'];
-  }
-}
+  console.log(formData);
+  localStorage.removeItem(formDataKey);
+  form.reset();
+  Object.assign(formData, {
+    email: "",
+    message: ""
+  });
+});
